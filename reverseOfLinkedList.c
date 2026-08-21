@@ -47,7 +47,7 @@ int main() {
 }
 
 void createLinkedListNode() {
-
+    static struct node *previousNodeStore = NULL;
     struct node *dataNode = malloc(sizeof(struct node));
     int data;
 
@@ -58,22 +58,18 @@ void createLinkedListNode() {
         printf("Memory allocation failed\n");
         return;
     }
-
+    
     dataNode->data = data;
     dataNode->next = NULL;
-
+    
     if (head == NULL) {
         head = dataNode;
-    } 
-    else {
-        struct node *trav = head;
-
-        while (trav->next != NULL) {
-            trav = trav->next;
-        }
-
-        trav->next = dataNode;
+    }else{
+        previousNodeStore -> next = dataNode;
     }
+    
+    previousNodeStore = dataNode;
+   
 }
 
 void traverse() {

@@ -3,6 +3,7 @@
 
 void createLinkedListNode();
 void traverse();
+void reverseLinkedList();
 
 struct node {
     int data;
@@ -32,7 +33,7 @@ int main() {
                 traverse();
                 break;
 
-            case 3:
+            case 3:reverseLinkedList();
                 break;
 
             case 4:
@@ -90,4 +91,19 @@ void traverse() {
     }
 
     printf("NULL\n");
+}
+
+void reverseLinkedList() {
+    struct node *prev = NULL;
+    struct node *trav = head;
+    struct node *next = NULL;
+
+    while (trav != NULL) {
+        next = trav->next;
+        trav->next = prev;
+        prev = trav;
+        trav = next;
+    }
+
+    head = prev;
 }

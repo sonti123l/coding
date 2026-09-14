@@ -34,8 +34,10 @@ int main() {
                 traverse();
                 break;
 
-            case 3:reverseLinkedList();
-                break;
+            case 3: printf("Enter the position_no: ");
+                    scanf("%d", &position_number);
+                    deleteNodeAtPosition(position_number);
+                    break;
 
             case 4: printf("Enter the position_no: ");
                     scanf("%d", &position_number);
@@ -50,7 +52,6 @@ int main() {
 }
 
 void createLinkedListNode() {
-    // static struct node *previousNodeStore = NULL;
     struct node *dataNode = malloc(sizeof(struct node));
     struct node *trav = head;
     int data;
@@ -71,9 +72,11 @@ void createLinkedListNode() {
         dataNode -> next = head;
     }else{
         while(trav -> next!= head){
-            printf("%d", trav -> data);
             trav = trav -> next;
         }
+
+        trav -> next = dataNode;
+        dataNode -> next = head;
     }
     
     // previousNodeStore = dataNode;
@@ -89,12 +92,11 @@ void traverse() {
         return;
     }
 
-    while (trav != head) {
-        printf("%d -> ", trav->data);
-        trav = trav->next;
-    }
+    do{
+        printf("%d -> ", trav -> data);
+        trav = trav -> next;
+    }while(trav != head);
 
-    printf("NULL\n");
 }
 
 void reverseLinkedList() {
@@ -114,27 +116,46 @@ void reverseLinkedList() {
 
 void deleteNodeAtPosition(int pos_no){
     int count_pos = 0, count_elements = 0;
-    struct node *prev = NULL;
     struct node *trav = head;
-    struct node *next = NULL;
+    struct node *prev = NULL;
 
-    while(trav -> next!=head){
-        next = trav -> next;
-        prev = trav;
+    do{
         trav = trav -> next;
-        count_pos++;
         count_elements++;
-        if(count_pos == pos_no){
-            trav = trav-> next;
-            prev -> next = trav -> next;
-            free(trav);
-            count_pos = 0;
-        }
+    }while(trav != head);
+
+
+    if(count_elements == 1){
+        printf("%d", head -> data);
+        return ;
     }
 
-    if(count_elements > 1){
-        deleteNodeAtPosition(pos_no);
-    }else{
-        printf("%d", trav -> data);
-    }
+    do{
+        count_pos++;
+
+        if(count_pos == pos_no){
+            if(trav == head){
+                prev -> next = head -> next;
+                free(head);
+                count_pos = 0;
+            }else{
+                printf("came here");
+                prev -> next = trav -> next;
+                free(trav);
+                while(prev -> next != head){
+                    prev = prev -> next;
+                } 
+                count_pos = 0;   
+            }  
+        }else{
+            prev = trav;
+            trav = trav -> next;
+        }
+
+    }while(trav != head);
+
+
+    deleteNodeAtPosition(pos_no);
 }
+
+

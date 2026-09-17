@@ -139,7 +139,6 @@ void deleteNodeAtPosition(int pos_no){
                 free(head);
                 count_pos = 0;
             }else{
-                printf("came here");
                 prev -> next = trav -> next;
                 free(trav);
                 while(prev -> next != head){

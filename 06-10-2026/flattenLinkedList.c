@@ -147,7 +147,6 @@ void createChildOrSubChildNodeForParent(
         scanf("%d", &childDataNodeValue);
 
         childDataNode->data = childDataNodeValue;
-        childDataNode->previous = NULL;
         childDataNode->next = NULL;
         childDataNode->subChildNode = NULL;
         childDataNode->is_having_sub_nodes_or_not = false;
@@ -300,302 +299,302 @@ void flatLinkedList(Node* startNode)
 }
 
 
-// claude approach 
-// Multilevel doubly linked list:
-//  - create parent nodes, add children / sub-children to any parent
-//  - display the whole structure as a tree
-//  - flatten the list (children spliced in after their parent)
-//  - delete all sub-nodes so only the parent list remains
-#include <stdio.h>
-#include <stdlib.h>
+// // claude approach 
+// // Multilevel doubly linked list:
+// //  - create parent nodes, add children / sub-children to any parent
+// //  - display the whole structure as a tree
+// //  - flatten the list (children spliced in after their parent)
+// //  - delete all sub-nodes so only the parent list remains
+// #include <stdio.h>
+// #include <stdlib.h>
 
-typedef struct Node Node;
+// typedef struct Node Node;
 
-struct Node {
-    int data;
-    Node* previous;   // previous sibling on the same level (NULL for first)
-    Node* next;       // next sibling on the same level
-    Node* child;      // head of this node's child list
-};
+// struct Node {
+//     int data;
+//     Node* previous;   // previous sibling on the same level (NULL for first)
+//     Node* next;       // next sibling on the same level
+//     Node* child;      // head of this node's child list
+// };
 
-/* ---------- input helpers ---------- */
+// /* ---------- input helpers ---------- */
 
-// Reads an int, re-prompting on bad input. Returns 0 on EOF.
-static int readInt(const char* prompt, int* out)
-{
-    for (;;) {
-        printf("%s", prompt);
+// // Reads an int, re-prompting on bad input. Returns 0 on EOF.
+// static int readInt(const char* prompt, int* out)
+// {
+//     for (;;) {
+//         printf("%s", prompt);
 
-        int result = scanf("%d", out);
-        if (result == 1) {
-            return 1;
-        }
-        if (result == EOF) {
-            return 0;
-        }
+//         int result = scanf("%d", out);
+//         if (result == 1) {
+//             return 1;
+//         }
+//         if (result == EOF) {
+//             return 0;
+//         }
 
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF) {
-            // discard the rest of the bad line
-        }
-        printf("Please enter a number.\n");
-    }
-}
+//         int c;
+//         while ((c = getchar()) != '\n' && c != EOF) {
+//             // discard the rest of the bad line
+//         }
+//         printf("Please enter a number.\n");
+//     }
+// }
 
-static int askYesNo(const char* prompt)
-{
-    int answer;
-    if (!readInt(prompt, &answer)) {
-        return 0;
-    }
-    return answer != 0;
-}
+// static int askYesNo(const char* prompt)
+// {
+//     int answer;
+//     if (!readInt(prompt, &answer)) {
+//         return 0;
+//     }
+//     return answer != 0;
+// }
 
-/* ---------- list logic (no I/O) ---------- */
+// /* ---------- list logic (no I/O) ---------- */
 
-static Node* newNode(int data)
-{
-    Node* node = malloc(sizeof(Node));
-    if (node == NULL) {
-        return NULL;
-    }
-    node->data = data;
-    node->previous = NULL;
-    node->next = NULL;
-    node->child = NULL;
-    return node;
-}
+// static Node* newNode(int data)
+// {
+//     Node* node = malloc(sizeof(Node));
+//     if (node == NULL) {
+//         return NULL;
+//     }
+//     node->data = data;
+//     node->previous = NULL;
+//     node->next = NULL;
+//     node->child = NULL;
+//     return node;
+// }
 
-static void appendSibling(Node** head, Node* node)
-{
-    if (*head == NULL) {
-        *head = node;
-        return;
-    }
+// static void appendSibling(Node** head, Node* node)
+// {
+//     if (*head == NULL) {
+//         *head = node;
+//         return;
+//     }
 
-    Node* tail = *head;
-    while (tail->next != NULL) {
-        tail = tail->next;
-    }
-    tail->next = node;
-    node->previous = tail;
-}
+//     Node* tail = *head;
+//     while (tail->next != NULL) {
+//         tail = tail->next;
+//     }
+//     tail->next = node;
+//     node->previous = tail;
+// }
 
-// position is 1-based
-static Node* findByPosition(Node* head, int position)
-{
-    while (head != NULL && position > 1) {
-        head = head->next;
-        position--;
-    }
-    return (position == 1) ? head : NULL;
-}
+// // position is 1-based
+// static Node* findByPosition(Node* head, int position)
+// {
+//     while (head != NULL && position > 1) {
+//         head = head->next;
+//         position--;
+//     }
+//     return (position == 1) ? head : NULL;
+// }
 
-static Node* addChild(Node* parent, int value)
-{
-    Node* node = newNode(value);
-    if (node != NULL) {
-        appendSibling(&parent->child, node);
-    }
-    return node;
-}
+// static Node* addChild(Node* parent, int value)
+// {
+//     Node* node = newNode(value);
+//     if (node != NULL) {
+//         appendSibling(&parent->child, node);
+//     }
+//     return node;
+// }
 
-// Splices every child list in right after its parent, at all depths.
-// Returns the last node of the resulting list.
-static Node* flatten(Node* head)
-{
-    Node* current = head;
-    Node* tail = head;
+// // Splices every child list in right after its parent, at all depths.
+// // Returns the last node of the resulting list.
+// static Node* flatten(Node* head)
+// {
+//     Node* current = head;
+//     Node* tail = head;
 
-    while (current != NULL) {
-        Node* next = current->next;
+//     while (current != NULL) {
+//         Node* next = current->next;
 
-        if (current->child != NULL) {
-            Node* childHead = current->child;
-            Node* childTail = flatten(childHead);
+//         if (current->child != NULL) {
+//             Node* childHead = current->child;
+//             Node* childTail = flatten(childHead);
 
-            current->child = NULL;
-            current->next = childHead;
-            childHead->previous = current;
+//             current->child = NULL;
+//             current->next = childHead;
+//             childHead->previous = current;
 
-            childTail->next = next;
-            if (next != NULL) {
-                next->previous = childTail;
-            }
+//             childTail->next = next;
+//             if (next != NULL) {
+//                 next->previous = childTail;
+//             }
 
-            tail = childTail;
-        }
-        else {
-            tail = current;
-        }
+//             tail = childTail;
+//         }
+//         else {
+//             tail = current;
+//         }
 
-        current = next;
-    }
+//         current = next;
+//     }
 
-    return tail;
-}
+//     return tail;
+// }
 
-// Frees a list and everything below it.
-static void freeList(Node* head)
-{
-    while (head != NULL) {
-        Node* next = head->next;
-        freeList(head->child);
-        free(head);
-        head = next;
-    }
-}
+// // Frees a list and everything below it.
+// static void freeList(Node* head)
+// {
+//     while (head != NULL) {
+//         Node* next = head->next;
+//         freeList(head->child);
+//         free(head);
+//         head = next;
+//     }
+// }
 
-// Removes every sub-node at every depth, keeping only the parent list.
-static void deleteSubNodes(Node* head)
-{
-    for (Node* node = head; node != NULL; node = node->next) {
-        freeList(node->child);
-        node->child = NULL;
-    }
-}
+// // Removes every sub-node at every depth, keeping only the parent list.
+// static void deleteSubNodes(Node* head)
+// {
+//     for (Node* node = head; node != NULL; node = node->next) {
+//         freeList(node->child);
+//         node->child = NULL;
+//     }
+// }
 
-/* ---------- display ---------- */
+// /* ---------- display ---------- */
 
-static void printTree(const Node* head, int depth)
-{
-    for (const Node* node = head; node != NULL; node = node->next) {
-        if (depth == 0) {
-            printf("%d\n", node->data);
-        }
-        else {
-            printf("%*s├── %d\n", (depth - 1) * 4, "", node->data);
-        }
-        printTree(node->child, depth + 1);
-    }
-}
+// static void printTree(const Node* head, int depth)
+// {
+//     for (const Node* node = head; node != NULL; node = node->next) {
+//         if (depth == 0) {
+//             printf("%d\n", node->data);
+//         }
+//         else {
+//             printf("%*s├── %d\n", (depth - 1) * 4, "", node->data);
+//         }
+//         printTree(node->child, depth + 1);
+//     }
+// }
 
-static void printList(const Node* head)
-{
-    if (head == NULL) {
-        printf("(list is empty)\n");
-        return;
-    }
-    printTree(head, 0);
-}
+// static void printList(const Node* head)
+// {
+//     if (head == NULL) {
+//         printf("(list is empty)\n");
+//         return;
+//     }
+//     printTree(head, 0);
+// }
 
-// Prints the list level by level as "a <-> b <-> c <-> NULL"
-static void printFlat(const Node* head)
-{
-    if (head == NULL) {
-        printf("(list is empty)\n");
-        return;
-    }
-    for (const Node* node = head; node != NULL; node = node->next) {
-        printf("%d <-> ", node->data);
-    }
-    printf("NULL\n");
-}
+// // Prints the list level by level as "a <-> b <-> c <-> NULL"
+// static void printFlat(const Node* head)
+// {
+//     if (head == NULL) {
+//         printf("(list is empty)\n");
+//         return;
+//     }
+//     for (const Node* node = head; node != NULL; node = node->next) {
+//         printf("%d <-> ", node->data);
+//     }
+//     printf("NULL\n");
+// }
 
-/* ---------- interactive parts ---------- */
+// /* ---------- interactive parts ---------- */
 
-static void addChildrenInteractive(Node* parent)
-{
-    do {
-        int value;
-        if (!readInt("Enter the child node value: ", &value)) {
-            return;
-        }
+// static void addChildrenInteractive(Node* parent)
+// {
+//     do {
+//         int value;
+//         if (!readInt("Enter the child node value: ", &value)) {
+//             return;
+//         }
 
-        Node* child = addChild(parent, value);
-        if (child == NULL) {
-            printf("Out of memory, child not created\n");
-            return;
-        }
+//         Node* child = addChild(parent, value);
+//         if (child == NULL) {
+//             printf("Out of memory, child not created\n");
+//             return;
+//         }
 
-        char prompt[96];
-        snprintf(prompt, sizeof(prompt),
-                 "Add sub-children under %d? (1/0): ", child->data);
-        if (askYesNo(prompt)) {
-            addChildrenInteractive(child);
-        }
-    } while (askYesNo("Add another child to the same parent? (1/0): "));
-}
+//         char prompt[96];
+//         snprintf(prompt, sizeof(prompt),
+//                  "Add sub-children under %d? (1/0): ", child->data);
+//         if (askYesNo(prompt)) {
+//             addChildrenInteractive(child);
+//         }
+//     } while (askYesNo("Add another child to the same parent? (1/0): "));
+// }
 
-static void createParent(Node** head)
-{
-    int value;
-    if (!readInt("Enter the data: ", &value)) {
-        return;
-    }
+// static void createParent(Node** head)
+// {
+//     int value;
+//     if (!readInt("Enter the data: ", &value)) {
+//         return;
+//     }
 
-    Node* node = newNode(value);
-    if (node == NULL) {
-        printf("Out of memory, node not created\n");
-        return;
-    }
-    appendSibling(head, node);
-}
+//     Node* node = newNode(value);
+//     if (node == NULL) {
+//         printf("Out of memory, node not created\n");
+//         return;
+//     }
+//     appendSibling(head, node);
+// }
 
-int main(void)
-{
-    Node* head = NULL;
+// int main(void)
+// {
+//     Node* head = NULL;
 
-    for (;;) {
-        printf("\nEnter the option:\n"
-               "1. Create parent node\n"
-               "2. Add child nodes to a parent\n"
-               "3. Display the entire list\n"
-               "4. Flatten the list\n"
-               "5. Delete all sub-nodes (keep parents only)\n"
-               "6. Exit\n");
+//     for (;;) {
+//         printf("\nEnter the option:\n"
+//                "1. Create parent node\n"
+//                "2. Add child nodes to a parent\n"
+//                "3. Display the entire list\n"
+//                "4. Flatten the list\n"
+//                "5. Delete all sub-nodes (keep parents only)\n"
+//                "6. Exit\n");
 
-        int option;
-        if (!readInt("> ", &option)) {
-            break;
-        }
+//         int option;
+//         if (!readInt("> ", &option)) {
+//             break;
+//         }
 
-        switch (option) {
-            case 1:
-                createParent(&head);
-                break;
+//         switch (option) {
+//             case 1:
+//                 createParent(&head);
+//                 break;
 
-            case 2: {
-                int position;
-                if (!readInt("Enter the parent node number (1 = first): ", &position)) {
-                    break;
-                }
-                Node* parent = findByPosition(head, position);
-                if (parent == NULL) {
-                    printf("Parent node does not exist\n");
-                    break;
-                }
-                addChildrenInteractive(parent);
-                break;
-            }
+//             case 2: {
+//                 int position;
+//                 if (!readInt("Enter the parent node number (1 = first): ", &position)) {
+//                     break;
+//                 }
+//                 Node* parent = findByPosition(head, position);
+//                 if (parent == NULL) {
+//                     printf("Parent node does not exist\n");
+//                     break;
+//                 }
+//                 addChildrenInteractive(parent);
+//                 break;
+//             }
 
-            case 3:
-                printList(head);
-                break;
+//             case 3:
+//                 printList(head);
+//                 break;
 
-            case 4:
-                if (head != NULL) {
-                    flatten(head);
-                }
-                printf("\nList after flattening:\n");
-                printFlat(head);
-                break;
+//             case 4:
+//                 if (head != NULL) {
+//                     flatten(head);
+//                 }
+//                 printf("\nList after flattening:\n");
+//                 printFlat(head);
+//                 break;
 
-            case 5:
-                deleteSubNodes(head);
-                printf("\nParent nodes after deleting sub-nodes:\n");
-                printFlat(head);
-                break;
+//             case 5:
+//                 deleteSubNodes(head);
+//                 printf("\nParent nodes after deleting sub-nodes:\n");
+//                 printFlat(head);
+//                 break;
 
-            case 6:
-                freeList(head);
-                return 0;
+//             case 6:
+//                 freeList(head);
+//                 return 0;
 
-            default:
-                printf("Invalid option\n");
-        }
-    }
+//             default:
+//                 printf("Invalid option\n");
+//         }
+//     }
 
-    freeList(head);
-    return 0;
-}
+//     freeList(head);
+//     return 0;
+// }

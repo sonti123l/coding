@@ -42,7 +42,7 @@ int main()
         switch (option) {
 
             case 1:
-                createNode(parentHeadNode);
+                createNod4e(parentHeadNode);
                 break;
 
             case 2:
